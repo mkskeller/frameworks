@@ -27,11 +27,10 @@ for i in mult3 innerprod xtabs; do
     ./compile.py -p 128 $i || exit 1
 done
 
-for i in 0 1 2; do
+for i in 0 1; do
     ./spdz2-offline.x -p $i -N 3 -m &
 done
-
-wait
+./spdz2-offline.x -p 2 -N 3 -m || exit 1
 
 mkdir Programs/InputData
 printf "1\n14\n8\n" > Programs/InputData/mult3.P0 
