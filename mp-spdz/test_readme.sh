@@ -35,17 +35,17 @@ done
 mkdir Programs/InputData
 printf "1\n14\n8\n" > Programs/InputData/mult3.P0 
 printf "1\n12\n" > Programs/InputData/mult3.P1 
-printf "0\n" > Programs/InputData/mult3.P1 
+printf "0\n" > Programs/InputData/mult3.P2
 
 for i in 0 1 2; do
-    ./gen_input_fp.x -N 3 -i ./Programs/InputData/xtabs.P$i -o ./Player-Data/Private-Input-$i
+    ./gen_input_fp.x -N 3 -i ./Programs/InputData/mult3.P$i -o ./Player-Data/Private-Input-$i
 done
 
 ./Server.x 3 5000 &
 ./Player-Online.x 0 mult3 | grep 1344 || exit 1 &
 ./Player-Online.x 1 mult3 & ./Player-Online.x 2 mult3
 
-for 0 1 2; do
+for i in 0 1; do
     ./gen_input_fp.x -N 3 -i ./Programs/Source/xtabs.P$i -o ./Player-Data/Private-Input-$i
 done
 
