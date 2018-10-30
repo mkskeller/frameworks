@@ -19,6 +19,6 @@ ADD source/ /root/source
 ADD install.sh .
 RUN ["bash", "install.sh"]
 
-ADD README.md .
+ADD README.md setup.sh ./
 
 CMD ["/bin/bash"]

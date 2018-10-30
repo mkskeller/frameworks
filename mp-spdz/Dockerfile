@@ -20,5 +20,5 @@ RUN apt-get update && apt-get install -y \
 ADD install.sh .
 RUN ["bash", "install.sh"]
 
-add README.md .
+add README.md test_readme.sh ./
 add source/* ./MP-SPDZ/Programs/Source/

@@ -21,7 +21,7 @@ While MP-SPDZ allows benchmarking for a number of schemes, only two implementati
 
 ## Yao's garbled circuits
 
-First, compile the example source. We provide three examples (mult3, innerprod, xtabs). The `-B` determines the bit lenght of integers.
+First, compile the example source. We provide three examples (mult3, innerprod, xtabs). The `-B` argument determines the bit length of integers.
 ```
 $ cd MP-SPDZ
 $ ./compile.py -B 32 <ex>
@@ -46,7 +46,7 @@ $ ./yao-player.x -p 0 <ex> & ./yao-player -p 1 <ex>
 
 For example, the output from the following will include `Mult3 prod = 1344`. 
 ```
-$ ./yao-player.x 0 mult3 & ./yao-player.x 1 mult3
+$ ./yao-player.x -p 0 mult3 & ./yao-player.x -p 1 mult3
 ```
 
 ## SPDZ-2
@@ -57,18 +57,18 @@ SPDZ has two parts:
 - A pre-processing phase which generates shared randomness between the different parties. 
     This does not depend on the function to be computed and once pre-processing data is generated
     it can be used by many different parties until it is used up. 
-    Pre-processing is VERY RESOURCE INTENSIVE. **It needs about 3GB RAM per party.**
+    Pre-processing is VERY RESOURCE INTENSIVE. **It needs about 1GB RAM per party.**
 - An online phase which uses pre-processing data to evaluate any function. This is quite fast.
 
 Once in the docker, run the pre-processing phase for, say, 3 parties by executing the following:
 ```
 $ cd MP-SPDZ
-$ ./spdz2-offline.x -p 0 -N 3 &
-$ ./spdz2-offline.x -p 1 -N 3 &
-$ ./spdz2-offline.x -p 2 -N 3
+$ ./spdz2-offline.x -p 0 -N 3 -m &
+$ ./spdz2-offline.x -p 1 -N 3 -m &
+$ ./spdz2-offline.x -p 2 -N 3 -m
 ```
 
-This will run for a while to generate the pre-processing data. After the program outputs "Inv. 9500 out of 9600" wait a further 5 minutes. Then kill the process and the other spdz2-offline.x background processes. (If you wait longer than 5 minutes before killing them, it will generate more shared randomness, but for most applications 5 minutes worth should suffice.)
+This will run for a while to generate the pre-processing data. The generated data is enough for our examples. If you need more, run the pre-processing without `-m`. This will run infinitely; you need to send SIGHUP (Ctrl-C) to stop the programs gracefully once they have generated sufficient data.
 
 You should be able to see the pre-processing data files in MP-SPDZ/Player-Data.
 
@@ -97,9 +97,9 @@ For example, to run mult3 with inputs 14, 12, and 8, we'd do the following:
 ```
 $ cd MP-SPDZ
 $ mkdir Programs/InputData
-$ printf "1\n14\n" > Programs/InputData/mult3.P0 
+$ printf "1\n14\n8\n" > Programs/InputData/mult3.P0 
 $ printf "1\n12\n" > Programs/InputData/mult3.P1 
-$ printf "1\n8\n" > Programs/InputData/mult3.P2 
+$ printf "0\n" > Programs/InputData/mult3.P1 
 $ ./gen_input_fp.x -N 3 -i ./Programs/InputData/mult3.P0 -o ./Player-Data/Private-Input-0
 $ ./gen_input_fp.x -N 3 -i ./Programs/InputData/mult3.P1 -o ./Player-Data/Private-Input-1
 $ ./gen_input_fp.x -N 3 -i ./Programs/InputData/mult3.P2 -o ./Player-Data/Private-Input-2
